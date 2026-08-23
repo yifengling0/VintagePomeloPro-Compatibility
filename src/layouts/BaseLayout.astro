@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+import { withBase } from '../lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+}
+
+const {
+  title = 'Vintage Pomelo Pro Game Compatibility Database',
+  description = '旧柚 Pro 游戏兼容性数据库：搜索、筛选并查看游戏在 VintagePomeloPro 上的兼容性报告。',
+  canonical,
+} = Astro.props;
+
+const canonicalUrl =
+  canonical || new URL(Astro.url.pathname, Astro.site ?? 'https://yifengling0.github.io').href;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vintage Pomelo Pro Compatibility" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+  </head>
+  <body class="min-h-screen">
+    <header class="sticky top-0 z-30 border-b border-slate-800/80 bg-slate-900/80 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <a href={withBase('/')} class="flex items-center gap-2 font-semibold tracking-tight">
+          <span class="grid size-8 place-items-center rounded-lg bg-brand-500/20 text-base">🍊</span>
+          <span class="hidden sm:inline">Vintage Pomelo Pro</span>
+          <span class="text-xs text-slate-400 sm:ml-1">Compatibility</span>
+        </a>
+        <nav class="flex items-center gap-4 text-sm text-slate-300">
+          <a href={withBase('/')} class="hover:text-white">数据库</a>
+          <a
+            href="https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/new/choose"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-white"
+            >提交报告</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="mt-16 border-t border-slate-800/70">
+      <div class="mx-auto max-w-6xl px-4 py-8 text-xs text-slate-500">
+        <p>Vintage Pomelo Pro Game Compatibility Database · 旧柚 Pro 游戏兼容性数据库</p>
+        <p class="mt-1">
+          兼容性结果真实来源于用户提交与维护者测试，历史报告不会被覆盖。访问
+          <a
+            href="https://github.com/yifengling0/VintagePomeloPro-Compatibility"
+            target="_blank"
+            rel="noopener"
+            class="underline hover:text-slate-300"
+            >GitHub 仓库</a
+          >
+          参与贡献。
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

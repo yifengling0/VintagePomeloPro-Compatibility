@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import FilterPanel from '../components/FilterPanel.astro';
+import GameCard from '../components/GameCard.astro';
+import Pagination from '../components/Pagination.astro';
+import { getGames, toClientGames } from '../lib/games';
+import { sortByUpdatedAt } from '../lib/status';
+
+const games = sortByUpdatedAt(getGames());
+const clientGames = toClientGames(games);
+const pageSize = 24;
+const pageGames = games.slice(0, pageSize);
+// Escape "<" so untrusted values can never break out of the <script> tag.
+const json = JSON.stringify(clientGames).replace(/</g, '\\u003c');
+---
+
+<BaseLayout>
+  <section class="mx-auto max-w-6xl px-4 py-10">
+    <div class="max-w-2xl">
+      <p class="text-xs font-medium uppercase tracking-widest text-brand-300">Vintage Pomelo Pro</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">游戏兼容性数据库</h1>
+      <p class="mt-2 text-slate-400">
+        搜索、筛选并查看游戏在 VintagePomeloPro 上的兼容性报告。历史测试不会被覆盖，兼容状态完全来自真实报告。
+      </p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4">
+    <SearchBar />
+    <div class="mt-4">
+      <FilterPanel games={games} />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-4 pt-6">
+    <div class="mb-4 flex items-center justify-between text-xs text-slate-400">
+      <span id="vpp-count">共 {games.length} 款游戏</span>
+      <label class="inline-flex items-center gap-2">
+        每页
+        <select
+          id="vpp-per"
+          class="rounded-md border border-slate-700 bg-slate-800/70 px-2 py-1 text-xs focus:border-brand-500/60 focus:outline-none"
+        >
+          <option value="24" selected>24</option>
+          <option value="48">48</option>
+          <option value="96">96</option>
+        </select>
+      </label>
+    </div>
+
+    <div id="vpp-results" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+      {pageGames.map((game) => <GameCard game={game} />)}
+    </div>
+
+    <Pagination />
+  </section>
+
+  <script type="application/json" id="vpp-data" is:inline set:html={json} />
+  <script>
+    import { initDatabase } from '@/scripts/database';
+    initDatabase();
+  </script>
+</BaseLayout>

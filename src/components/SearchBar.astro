@@ -1,0 +1,19 @@
+---
+interface Props {
+  value?: string;
+}
+
+const { value = '' } = Astro.props;
+---
+
+<div class="relative">
+  <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">🔎</span>
+  <input
+    id="vpp-search"
+    type="search"
+    value={value}
+    placeholder="搜索英文名 / 中文名 / 别名 / 开发者 / 发行商… 例：古墓、Tomb Raider、Crystal Dynamics"
+    autocomplete="off"
+    class="w-full rounded-xl border border-slate-700 bg-slate-800/60 py-3 pl-10 pr-4 text-white placeholder-slate-500 outline-none transition focus:border-brand-500/60 focus:ring-2 focus:ring-brand-500/20"
+  />
+</div>

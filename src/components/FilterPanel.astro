@@ -1,0 +1,90 @@
+---
+import type { Game } from '../lib/types';
+import { STATUS_META, STATUS_ORDER } from '../lib/status';
+import { RENDERER_META, RENDERER_ORDER, distinctGenres, distinctGpus, genreLabel } from '../lib/filters';
+
+interface Props {
+  games: Game[];
+  status?: string;
+  renderer?: string;
+  genre?: string;
+  gpu?: string;
+}
+
+const { games, status = '', renderer = '', genre = '', gpu = '' } = Astro.props;
+const genres = distinctGenres(games);
+const gpus = distinctGpus(games);
+
+const selectClass =
+  'w-full rounded-lg border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm text-slate-200 outline-none focus:border-brand-500/60 focus:ring-2 focus:ring-brand-500/20';
+const labelClass = 'block text-xs font-medium text-slate-400 mb-1.5';
+---
+
+<input type="checkbox" id="vpp-filters-toggle" class="peer sr-only" />
+<label
+  for="vpp-filters-toggle"
+  class="mb-3 flex w-full cursor-pointer items-center justify-between rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2.5 text-sm text-slate-200 md:hidden"
+>
+  <span>筛选</span>
+  <span class="text-slate-500">▾</span>
+</label>
+
+<div
+  class="grid max-h-0 grid-cols-2 gap-3 overflow-hidden transition-all duration-200 peer-checked:max-h-[480px] md:max-h-none md:grid-cols-4 md:gap-3"
+>
+  <div>
+    <label class={labelClass} for="vpp-status">兼容状态</label>
+    <select id="vpp-status" class={selectClass}>
+      <option value="">全部</option>
+      {STATUS_ORDER.map((s) => (
+        <option value={s} selected={status === s}>
+          {STATUS_META[s].emoji} {STATUS_META[s].label}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div>
+    <label class={labelClass} for="vpp-renderer">渲染后端</label>
+    <select id="vpp-renderer" class={selectClass}>
+      <option value="">全部</option>
+      {RENDERER_ORDER.map((r) => (
+        <option value={r} selected={renderer === r}>
+          {RENDERER_META[r].label}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div>
+    <label class={labelClass} for="vpp-genre">游戏类型</label>
+    <select id="vpp-genre" class={selectClass}>
+      <option value="">全部</option>
+      {genres.map((g) => (
+        <option value={g} selected={genre === g}>
+          {genreLabel(g)}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <div>
+    <label class={labelClass} for="vpp-gpu">GPU</label>
+    <select id="vpp-gpu" class={selectClass}>
+      <option value="">全部</option>
+      {gpus.map((gpuOption) => (
+        <option value={gpuOption} selected={gpu === gpuOption}>
+          {gpuOption}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
+<button
+  id="vpp-reset"
+  type="button"
+  class="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white"
+>
+  重置
+</button>

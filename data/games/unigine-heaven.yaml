@@ -1,0 +1,119 @@
+# Game metadata + compatibility reports.
+# Benchmark used to observe renderer version regression trends.
+schema_version: 1
+
+id: unigine-heaven
+slug: unigine-heaven
+
+name: Unigine Heaven
+name_zh: Unigine Heaven
+
+aliases:
+  - Heaven Benchmark
+  - Unigine Heaven Benchmark
+
+release_date: 2009-10-22
+release_year: 2009
+
+developer:
+  - Unigine
+
+publisher:
+  - Unigine
+
+genres:
+  - benchmark
+  - simulation
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: null
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: official
+    id: null
+    url: https://benchmark.unigine.com/heaven
+
+metadata_confidence: high
+
+created_at: 2026-08-23
+updated_at: 2026-08-23
+
+reports:
+  - report_id: maintainer-unigine-heaven-0001
+    source:
+      type: maintainer
+      issue: null
+      user: null
+    tested_at: 2026-08-20
+    winehua_version: "6.2.0"
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: null
+    renderer:
+      backend: dxvk
+      version: "1.10.3"
+    graphics_api:
+      api: d3d11
+    architecture:
+      game: x64
+      wine: x64
+    status: playable
+    performance:
+      fps_avg: 35
+      fps_min: 20
+      fps_max: 48
+      resolution: 1920x1080
+    symptoms: []
+    workarounds: []
+    notes: >
+      DXVK 1.10.3 下基准测试可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
+
+  - report_id: maintainer-unigine-heaven-0002
+    source:
+      type: maintainer
+      issue: null
+      user: null
+    tested_at: 2026-08-23
+    winehua_version: "6.2.0"
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: null
+    renderer:
+      backend: dxvk
+      version: "2.6.2"
+    graphics_api:
+      api: d3d11
+    architecture:
+      game: x64
+      wine: x64
+    status: broken
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms:
+      - 主界面渲染为全黑
+      - 基准场景无法渲染
+    workarounds: []
+    notes: >
+      DXVK 从 1.10.3 升级到 2.6.2 后出现黑屏回归。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

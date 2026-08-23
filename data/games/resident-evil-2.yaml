@@ -1,0 +1,80 @@
+# Game metadata + compatibility reports.
+# Same series, different year than resident-evil-2-remake, so keep a separate file.
+schema_version: 1
+
+id: resident-evil-2
+slug: resident-evil-2
+
+name: Resident Evil 2
+name_zh: 生化危机2
+
+aliases:
+  - BIOHAZARD 2
+  - Resident Evil 2 (1998)
+
+release_date: 1998-01-21
+release_year: 1998
+
+developer:
+  - Capcom
+
+publisher:
+  - Capcom
+
+genres:
+  - survival
+  - action
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: null
+  igdb: null
+  gog: "resident_evil_2"
+
+metadata_sources:
+  - type: gog
+    id: "resident_evil_2"
+
+metadata_confidence: medium
+
+created_at: 2026-08-22
+updated_at: 2026-08-22
+
+reports:
+  - report_id: maintainer-resident-evil-2-0001
+    source:
+      type: maintainer
+      issue: null
+      user: null
+    tested_at: 2026-08-22
+    winehua_version: "6.2.0"
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: null
+    renderer:
+      backend: wined3d
+      version: null
+    graphics_api:
+      api: d3d9
+    architecture:
+      game: x86
+      wine: x86
+    status: playable
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: 1280x720
+    symptoms: []
+    workarounds: []
+    notes: >
+      经典 1998 版本可以通过 WineD3D 运行，画面正常。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

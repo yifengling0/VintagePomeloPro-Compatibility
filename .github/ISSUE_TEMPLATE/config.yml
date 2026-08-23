@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 提交兼容性报告
+    url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/new?assignees=&labels=compatibility-report&projects=&template=compatibility-report.yml
+    about: 使用标准表单提交游戏兼容性反馈
+  - name: GitHub 仓库主页
+    url: https://github.com/yifengling0/VintagePomeloPro-Compatibility
+    about: 查看仓库与贡献规则

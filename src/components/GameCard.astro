@@ -1,0 +1,51 @@
+---
+import type { Game } from '../lib/types';
+import { RENDERER_META, summarize } from '../lib/filters';
+import { withBase } from '../lib/url';
+import CompatibilityBadge from './CompatibilityBadge.astro';
+
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+const s = summarize(game);
+const href = withBase(`/games/${game.slug}/`);
+const rendererText = s.renderer
+  ? `${RENDERER_META[s.renderer].label}${s.renderer_version ? ` ${s.renderer_version}` : ''}`
+  : '—';
+---
+
+<article
+  class="group relative flex flex-col rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5 transition hover:border-brand-500/40 hover:bg-slate-800"
+>
+  <div class="mb-3 flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h3 class="truncate text-base font-semibold text-white group-hover:text-brand-100">
+        <a href={href}>{game.name}</a>
+      </h3>
+      {game.name_zh && <p class="truncate text-sm text-slate-400">{game.name_zh}</p>}
+    </div>
+    <CompatibilityBadge status={s.status} size="sm" />
+  </div>
+
+  <p class="text-xs text-slate-400">
+    <span>{game.release_year}</span>
+    {game.developer.length > 0 && <span> · {game.developer.join(', ')}</span>}
+  </p>
+
+  <dl class="mt-auto space-y-1 pt-4 text-xs text-slate-300">
+    <div class="flex gap-1.5">
+      <dt class="shrink-0 text-slate-500">VP</dt>
+      <dd class="truncate">{s.winehua_version ?? '—'} · {rendererText}</dd>
+    </div>
+    <div class="flex gap-1.5">
+      <dt class="shrink-0 text-slate-500">设备</dt>
+      <dd class="truncate">{s.device_model ?? '—'}{s.gpu ? ` · ${s.gpu}` : ''}</dd>
+    </div>
+    <div class="flex gap-1.5">
+      <dt class="shrink-0 text-slate-500">更新</dt>
+      <dd>{game.updated_at}</dd>
+    </div>
+  </dl>
+</article>

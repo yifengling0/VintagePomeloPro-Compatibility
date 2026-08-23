@@ -1,0 +1,196 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompatibilityBadge from '../../components/CompatibilityBadge.astro';
+import { getGames } from '../../lib/games';
+import { STATUS_META, sortReports } from '../../lib/status';
+import { genreLabel, rendererLabel, summarize } from '../../lib/filters';
+import { withBase } from '../../lib/url';
+import type { Game, Status } from '../../lib/types';
+
+export function getStaticPaths() {
+  return getGames().map((game) => ({
+    params: { slug: game.slug },
+    props: { game },
+  }));
+}
+
+interface Props {
+  game: Game;
+}
+
+const { game } = Astro.props;
+const s = summarize(game);
+const reports = sortReports(game.reports);
+
+const counts: Record<Status, number> = {
+  perfect: 0,
+  playable: 0,
+  minor_issues: 0,
+  major_issues: 0,
+  broken: 0,
+  unknown: 0,
+};
+for (const r of game.reports) counts[r.status]++;
+
+const devs = game.developer?.join(', ') ?? '—';
+const pubs = game.publisher?.length ? game.publisher.join(', ') : '—';
+const genres = game.genres?.map(genreLabel).join(' · ') ?? '—';
+const platforms = game.platforms?.join(', ') ?? '—';
+const steamId = game.external_ids?.steam;
+const igdbId = game.external_ids?.igdb;
+const gogId = game.external_ids?.gog;
+
+const title = `${game.name}${game.release_year ? ` (${game.release_year})` : ''} - Vintage Pomelo Pro Compatibility`;
+const description = `${game.name} 在 VintagePomeloPro 上的兼容性报告：当前状态 ${STATUS_META[s.status].label}，共 ${game.reports.length} 条测试记录。`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://yifengling0.github.io').href;
+
+const formatSourceType = (type: string) => {
+  const map: Record<string, string> = {
+    github_issue: 'GitHub Issue',
+    manual: '手动报告',
+    maintainer: '维护者测试',
+    ci: 'CI 测试',
+  };
+  return map[type] ?? type;
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="mx-auto max-w-6xl px-4 py-8">
+    <a href={withBase('/')} class="text-sm text-slate-400 hover:text-white">← 返回数据库</a>
+
+    <header class="mt-4 flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight text-white">
+          {game.name}{game.release_year ? ` (${game.release_year})` : ''}
+        </h1>
+        {game.name_zh && <p class="mt-1 text-lg text-slate-400">{game.name_zh}</p>}
+        {game.aliases && game.aliases.length > 0 && (
+          <p class="mt-2 text-sm text-slate-500">别名：{game.aliases.join(' · ')}</p>
+        )}
+      </div>
+      <div class="flex flex-col items-end gap-2">
+        <CompatibilityBadge status={s.status} />
+        <span class="text-xs text-slate-500">{game.updated_at} 更新</span>
+      </div>
+    </header>
+
+    <!-- Overview -->
+    <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="rounded-2xl border border-slate-700/60 bg-slate-800/40 p-5 lg:col-span-1">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">当前兼容状态</h2>
+        <div class="mt-3">
+          <span class="text-4xl font-bold text-white">{STATUS_META[s.status].emoji} {STATUS_META[s.status].label}</span>
+          <p class="mt-1 text-sm text-slate-400">{STATUS_META[s.status].zh}</p>
+        </div>
+        <dl class="mt-4 space-y-2 text-sm text-slate-300">
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">VP 版本</dt><dd>{s.winehua_version ?? '—'}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">渲染后端</dt><dd>{s.renderer ? rendererLabel(s.renderer) : '—'}{s.renderer_version ? ` ${s.renderer_version}` : ''}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">GPU</dt><dd>{s.gpu ?? '—'}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">设备</dt><dd>{s.device_model ?? '—'}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">测试日期</dt><dd>{s.tested_at}</dd></div>
+        </dl>
+      </div>
+
+      <div class="rounded-2xl border border-slate-700/60 bg-slate-800/40 p-5 lg:col-span-2">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">游戏信息</h2>
+        <dl class="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+          <div><dt class="text-slate-500">发行日期</dt><dd class="text-slate-300">{game.release_date}</dd></div>
+          <div><dt class="text-slate-500">开发商</dt><dd class="text-slate-300">{devs}</dd></div>
+          <div><dt class="text-slate-500">发行商</dt><dd class="text-slate-300">{pubs}</dd></div>
+          <div><dt class="text-slate-500">类型</dt><dd class="text-slate-300">{genres}</dd></div>
+          <div><dt class="text-slate-500">平台</dt><dd class="text-slate-300">{platforms}</dd></div>
+          <div><dt class="text-slate-500">元数据置信度</dt><dd class="uppercase text-slate-300">{game.metadata_confidence}</dd></div>
+          <div><dt class="text-slate-500">Steam AppID</dt><dd class="text-slate-300">{steamId ?? '—'}</dd></div>
+          <div><dt class="text-slate-500">IGDB / GOG</dt><dd class="text-slate-300">{igdbId ?? '—'} / {gogId ?? '—'}</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Status breakdown -->
+    <section class="mt-6 rounded-2xl border border-slate-700/60 bg-slate-800/40 p-5">
+      <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">兼容性总览</h2>
+      <div class="mt-4 flex flex-wrap gap-3">
+        {(Object.keys(STATUS_META) as Status[]).map((st) => (
+          <span
+            class={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs ring-1 ring-inset ${STATUS_META[st].badge}`}
+          >
+            {STATUS_META[st].emoji} {STATUS_META[st].label}
+            <span class="font-semibold">{counts[st]}</span>
+          </span>
+        ))}
+      </div>
+      <p class="mt-3 text-xs text-slate-500">
+        共 {game.reports.length} 条测试记录，历史报告不会被覆盖。
+      </p>
+    </section>
+
+    <!-- Reports -->
+    <section class="mt-8">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">全部测试记录</h2>
+      <div class="mt-4 space-y-4">
+        {reports.map((r, i) => (
+          <article
+            class={`rounded-2xl border border-slate-700/60 bg-slate-800/40 p-5 ${i === 0 ? 'ring-1 ring-brand-500/30' : ''}`}
+          >
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <CompatibilityBadge status={r.status} size="sm" />
+                <span class="text-xs text-slate-500">{r.tested_at}</span>
+                {i === 0 && <span class="rounded-full bg-brand-500/20 px-2 py-0.5 text-[10px] font-semibold text-brand-100">最新</span>}
+              </div>
+              <span class="text-xs text-slate-500">
+                {formatSourceType(r.source?.type ?? 'manual')}
+                {r.source?.issue ? ` · Issue #${r.source.issue}` : ''}
+              </span>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+              <div><dt class="text-slate-500">VP 版本</dt><dd class="text-slate-200">{r.winehua_version ?? '—'}</dd></div>
+              <div><dt class="text-slate-500">渲染后端</dt><dd class="text-slate-200">{r.renderer ? `${rendererLabel(r.renderer.backend)}${r.renderer.version ? ` ${r.renderer.version}` : ''}` : '—'}</dd></div>
+              <div><dt class="text-slate-500">图形 API</dt><dd class="uppercase text-slate-200">{r.graphics_api?.api ?? '—'}</dd></div>
+              <div><dt class="text-slate-500">设备</dt><dd class="text-slate-200">{r.device?.model ?? '—'}{r.device?.gpu ? ` · ${r.device.gpu}` : ''}</dd></div>
+              <div><dt class="text-slate-500">OS</dt><dd class="text-slate-200">{r.device?.os ?? '—'}{r.device?.os_version ? ` ${r.device.os_version}` : ''}</dd></div>
+              <div><dt class="text-slate-500">架构</dt><dd class="text-slate-200">{r.architecture?.game ?? '—'} / Wine {r.architecture?.wine ?? '—'}</dd></div>
+              {r.performance?.fps_avg != null && (
+                <div><dt class="text-slate-500">FPS · 平均/最低/最高</dt><dd class="text-slate-200">{r.performance.fps_avg} / {r.performance.fps_min ?? '—'} / {r.performance.fps_max ?? '—'}</dd></div>
+              )}
+              {r.performance?.resolution && (
+                <div><dt class="text-slate-500">分辨率</dt><dd class="text-slate-200">{r.performance.resolution}</dd></div>
+              )}
+            </div>
+
+            {r.notes && <p class="mt-4 border-t border-slate-700/50 pt-3 text-sm text-slate-300">{r.notes}</p>}
+
+            {r.symptoms && r.symptoms.length > 0 && (
+              <div class="mt-3">
+                <span class="text-xs text-slate-500">问题症状</span>
+                <ul class="mt-1 list-inside list-disc text-sm text-slate-300">
+                  {r.symptoms.map((sym) => <li>{sym}</li>)}
+                </ul>
+              </div>
+            )}
+
+            {r.workarounds && r.workarounds.length > 0 && (
+              <div class="mt-3">
+                <span class="text-xs text-slate-500">解决方法</span>
+                <ul class="mt-1 list-inside list-disc text-sm text-emerald-200">
+                  {r.workarounds.map((w) => <li>{w}</li>)}
+                </ul>
+              </div>
+            )}
+
+            {r.evidence &&
+              (r.evidence.screenshots?.length || r.evidence.logs?.length || r.evidence.videos?.length) ? (
+              <div class="mt-3 flex flex-wrap gap-2 text-xs">
+                {r.evidence.screenshots?.map((x) => <a class="text-brand-300 underline" href={x} target="_blank" rel="noopener">截图</a>)}
+                {r.evidence.logs?.map((x) => <a class="text-brand-300 underline" href={x} target="_blank" rel="noopener">日志</a>)}
+                {r.evidence.videos?.map((x) => <a class="text-brand-300 underline" href={x} target="_blank" rel="noopener">视频</a>)}
+              </div>
+            ) : null}
+          </article>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

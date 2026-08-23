@@ -1,0 +1,176 @@
+name: Compatibility Report
+description: 提交一款游戏在 VintagePomeloPro 上的兼容性反馈
+title: "[Compatibility] <游戏名称>"
+labels: ["compatibility-report"]
+assignees: []
+body:
+  - type: input
+    id: game
+    attributes:
+      label: 游戏名称
+      description: 游戏正式英文名或常见中文名（例如 Tomb Raider / 古墓丽影）
+      placeholder: 例如 Tomb Raider / 古墓丽影
+    validations:
+      required: true
+
+  - type: input
+    id: game_version
+    attributes:
+      label: 游戏版本
+      description: 如果你知道，请填写游戏版本号
+      placeholder: 例如 v1.0.3
+
+  - type: input
+    id: source
+    attributes:
+      label: 游戏来源 / 商店
+      description: 例如 Steam、GOG、实体光盘等
+      placeholder: Steam / GOG / 其他
+
+  - type: input
+    id: steam_appid
+    attributes:
+      label: Steam AppID
+      description: 可选，便于自动关联元数据
+      placeholder: "例如 203160"
+
+  - type: input
+    id: winehua_version
+    attributes:
+      label: VintagePomeloPro 版本
+      description: 你使用的旧柚 Pro 应用版本，非常重要
+      placeholder: "例如 6.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: device_model
+    attributes:
+      label: 设备型号
+      description: 测试设备型号
+      placeholder: 例如 Mate 80
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU
+      description: 设备 GPU（例如 Maleoon 920）
+      placeholder: 例如 Maleoon 920
+
+  - type: input
+    id: os_version
+    attributes:
+      label: HarmonyOS 版本
+      placeholder: 例如 5.0.0
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: 游戏架构
+      options:
+        - x86
+        - x64
+        - 不确定
+    validations:
+      required: true
+
+  - type: input
+    id: graphics_api
+    attributes:
+      label: 图形 API
+      placeholder: 例如 d3d11 / OpenGL
+
+  - type: dropdown
+    id: renderer
+    attributes:
+      label: 渲染后端（Renderer）
+      options:
+        - DXVK
+        - VKD3D
+        - WineD3D
+        - VirGL
+        - Native OpenGL
+        - 其他 / 不确定
+    validations:
+      required: true
+
+  - type: input
+    id: renderer_version
+    attributes:
+      label: Renderer 版本
+      placeholder: 例如 2.6.2
+
+  - type: dropdown
+    id: status
+    attributes:
+      label: 兼容状态
+      options:
+        - 完美 Perfect
+        - 可玩 Playable
+        - 小问题 Minor Issues
+        - 严重问题 Major Issues
+        - 不可用 Broken
+        - 未知 Unknown
+    validations:
+      required: true
+
+  - type: input
+    id: fps_avg
+    attributes:
+      label: 平均 FPS
+      placeholder: 例如 35
+
+  - type: input
+    id: fps_min
+    attributes:
+      label: 最低 FPS
+      placeholder: 例如 20
+
+  - type: input
+    id: fps_max
+    attributes:
+      label: 最高 FPS
+      placeholder: 例如 48
+
+  - type: input
+    id: resolution
+    attributes:
+      label: 分辨率
+      placeholder: 例如 1920x1080
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 描述现象，例如能否进入游戏、是否黑屏、是否存在明显卡顿或图形异常
+      placeholder: 请尽量详细描述你的测试过程与现象…
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: 解决方法 / Workaround
+      description: 如果你找到了解决方法，请填写
+      placeholder: 例如 关闭动态模糊 / 改用 DXVK 2.8 / 调整画质为 Low
+
+  - type: input
+    id: log_link
+    attributes:
+      label: 日志链接
+      description: 可公开访问的日志地址（可选）
+      placeholder: https://…
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 截图 / 视频
+      description: 粘贴可公开访问的截图或视频链接，每行一个（可选）
+      placeholder: https://…\nhttps://…
+
+  - type: markdown
+    attributes:
+      value: >-
+        请勿在 Issue 中包含任何敏感信息。提交后，兼容性 Agent 会解析、补全元数据、去重并创建 Pull Request。
