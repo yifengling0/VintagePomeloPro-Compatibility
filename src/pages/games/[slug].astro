@@ -41,8 +41,10 @@ const igdbId = game.external_ids?.igdb;
 const gogId = game.external_ids?.gog;
 
 const title = `${game.name}${game.release_year ? ` (${game.release_year})` : ''} - Vintage Pomelo Pro Compatibility`;
-const description = `${game.name} 在 VintagePomeloPro 上的兼容性报告：当前状态 ${STATUS_META[s.status].label}，共 ${game.reports.length} 条测试记录。`;
+const description = `${game.name} 在 VintagePomeloPro 上的兼容性报告：当前状态 ${STATUS_META[s.status].zh}，共 ${game.reports.length} 条测试记录。`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://yifengling0.github.io').href;
+
+const confidenceMap: Record<string, string> = { high: '高', medium: '中', low: '低' };
 
 const formatSourceType = (type: string) => {
   const map: Record<string, string> = {
@@ -80,8 +82,8 @@ const formatSourceType = (type: string) => {
       <div class="rounded-2xl border border-slate-700/60 bg-slate-800/40 p-5 lg:col-span-1">
         <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">当前兼容状态</h2>
         <div class="mt-3">
-          <span class="text-4xl font-bold text-white">{STATUS_META[s.status].emoji} {STATUS_META[s.status].label}</span>
-          <p class="mt-1 text-sm text-slate-400">{STATUS_META[s.status].zh}</p>
+          <span class="text-4xl font-bold text-white">{STATUS_META[s.status].emoji} {STATUS_META[s.status].zh}</span>
+          <p class="mt-1 text-sm text-slate-400">共 {game.reports.length} 条测试记录，历史报告不会被覆盖。</p>
         </div>
         <dl class="mt-4 space-y-2 text-sm text-slate-300">
           <div class="flex justify-between gap-2"><dt class="text-slate-500">VP 版本</dt><dd>{s.winehua_version ?? '—'}</dd></div>
@@ -100,7 +102,7 @@ const formatSourceType = (type: string) => {
           <div><dt class="text-slate-500">发行商</dt><dd class="text-slate-300">{pubs}</dd></div>
           <div><dt class="text-slate-500">类型</dt><dd class="text-slate-300">{genres}</dd></div>
           <div><dt class="text-slate-500">平台</dt><dd class="text-slate-300">{platforms}</dd></div>
-          <div><dt class="text-slate-500">元数据置信度</dt><dd class="uppercase text-slate-300">{game.metadata_confidence}</dd></div>
+          <div><dt class="text-slate-500">元数据置信度</dt><dd class="text-slate-300">{confidenceMap[game.metadata_confidence] ?? game.metadata_confidence}</dd></div>
           <div><dt class="text-slate-500">Steam AppID</dt><dd class="text-slate-300">{steamId ?? '—'}</dd></div>
           <div><dt class="text-slate-500">IGDB / GOG</dt><dd class="text-slate-300">{igdbId ?? '—'} / {gogId ?? '—'}</dd></div>
         </dl>
@@ -115,7 +117,7 @@ const formatSourceType = (type: string) => {
           <span
             class={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs ring-1 ring-inset ${STATUS_META[st].badge}`}
           >
-            {STATUS_META[st].emoji} {STATUS_META[st].label}
+            {STATUS_META[st].emoji} {STATUS_META[st].zh}
             <span class="font-semibold">{counts[st]}</span>
           </span>
         ))}

@@ -38,7 +38,7 @@ const labelClass = 'block text-xs font-medium text-slate-400 mb-1.5';
       <option value="">全部</option>
       {STATUS_ORDER.map((s) => (
         <option value={s} selected={status === s}>
-          {STATUS_META[s].emoji} {STATUS_META[s].label}
+          {STATUS_META[s].emoji} {STATUS_META[s].zh}
         </option>
       ))}
     </select>
