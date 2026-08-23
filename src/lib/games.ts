@@ -2,7 +2,8 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
 import type { ClientGame, Game } from './types';
-import { summarize } from './filters';
+import { summarize, summarizeFor } from './filters';
+import { APPS } from './apps';
 
 const DATA_DIR = join(process.cwd(), 'data', 'games');
 
@@ -34,7 +35,12 @@ export function getGame(slug: string): Game | undefined {
 /** Minimal, safe object embedded into the page for the client-side database UI. */
 export function toClientGames(games: Game[]): ClientGame[] {
   return games.map((g) => {
-    const s = summarize(g);
+    const latest = summarize(g);
+    const by_app: Record<string, ClientGame['latest']> = {};
+    for (const a of APPS) {
+      const s = summarizeFor(g, a.id);
+      if (s) by_app[a.id] = s;
+    }
     return {
       slug: g.slug,
       name: g.name,
@@ -43,14 +49,10 @@ export function toClientGames(games: Game[]): ClientGame[] {
       developer: g.developer ?? [],
       publisher: g.publisher ?? [],
       genres: g.genres ?? [],
-      status: s.status,
-      winehua_version: s.winehua_version,
-      renderer: s.renderer,
-      renderer_version: s.renderer_version,
-      gpu: s.gpu,
-      device_model: s.device_model,
-      updated_at: g.updated_at,
       aliases: g.aliases ?? [],
+      updated_at: g.updated_at,
+      latest,
+      by_app,
     };
   });
 }

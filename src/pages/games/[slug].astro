@@ -4,6 +4,7 @@ import CompatibilityBadge from '../../components/CompatibilityBadge.astro';
 import { getGames } from '../../lib/games';
 import { STATUS_META, sortReports } from '../../lib/status';
 import { genreLabel, rendererLabel, summarize } from '../../lib/filters';
+import { appLabel } from '../../lib/apps';
 import { withBase } from '../../lib/url';
 import type { Game, Status } from '../../lib/types';
 
@@ -86,7 +87,7 @@ const formatSourceType = (type: string) => {
           <p class="mt-1 text-sm text-slate-400">共 {game.reports.length} 条测试记录，历史报告不会被覆盖。</p>
         </div>
         <dl class="mt-4 space-y-2 text-sm text-slate-300">
-          <div class="flex justify-between gap-2"><dt class="text-slate-500">VP 版本</dt><dd>{s.winehua_version ?? '—'}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">应用</dt><dd>{appLabel(s.app) || '—'}{s.winehua_version ? ` ${s.winehua_version}` : ''}</dd></div>
           <div class="flex justify-between gap-2"><dt class="text-slate-500">渲染后端</dt><dd>{s.renderer ? rendererLabel(s.renderer) : '—'}{s.renderer_version ? ` ${s.renderer_version}` : ''}</dd></div>
           <div class="flex justify-between gap-2"><dt class="text-slate-500">GPU</dt><dd>{s.gpu ?? '—'}</dd></div>
           <div class="flex justify-between gap-2"><dt class="text-slate-500">设备</dt><dd>{s.device_model ?? '—'}</dd></div>
@@ -148,7 +149,7 @@ const formatSourceType = (type: string) => {
             </div>
 
             <div class="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
-              <div><dt class="text-slate-500">VP 版本</dt><dd class="text-slate-200">{r.winehua_version ?? '—'}</dd></div>
+              <div><dt class="text-slate-500">应用</dt><dd class="text-slate-200">{appLabel(r.app ?? '') || '—'}{r.winehua_version ? ` ${r.winehua_version}` : ''}</dd></div>
               <div><dt class="text-slate-500">渲染后端</dt><dd class="text-slate-200">{r.renderer ? `${rendererLabel(r.renderer.backend)}${r.renderer.version ? ` ${r.renderer.version}` : ''}` : '—'}</dd></div>
               <div><dt class="text-slate-500">图形 API</dt><dd class="uppercase text-slate-200">{r.graphics_api?.api ?? '—'}</dd></div>
               <div><dt class="text-slate-500">设备</dt><dd class="text-slate-200">{r.device?.model ?? '—'}{r.device?.gpu ? ` · ${r.device.gpu}` : ''}</dd></div>

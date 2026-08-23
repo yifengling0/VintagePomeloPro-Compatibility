@@ -48,6 +48,7 @@ reports:
       issue: null
       user: null
     tested_at: 2026-08-23
+    app: vintagepomelopro
     winehua_version: "6.2.0"
     device:
       model: Mate 80
@@ -76,6 +77,45 @@ reports:
       - 将画质预设切换为 Low 可稳定在 30 FPS
     notes: >
       可以进入游戏，但性能波动较大，画面存在明显伪影。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
+
+  - report_id: maintainer-crysis-0002
+    source:
+      type: maintainer
+      issue: null
+      user: null
+    tested_at: 2026-08-19
+    app: vintagepomelo
+    winehua_version: "1.2.6"
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: null
+    renderer:
+      backend: dxvk
+      version: "1.10.3"
+    graphics_api:
+      api: d3d9
+    architecture:
+      game: x64
+      wine: x86
+    status: broken
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms:
+      - 启动后直接闪退
+    workarounds:
+      - 暂不可用
+    notes: >
+      旧柚（非 Pro）在 DXVK 1.10.3 下启动即闪退。
     evidence:
       screenshots: []
       logs: []

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { loadGames } from './load';
+import { isKnownApp } from '../src/lib/apps';
 
 const SCHEMA_PATH = join(process.cwd(), 'schemas', 'game.schema.json');
 const schema = JSON.parse(readFileSync(SCHEMA_PATH, 'utf8'));
@@ -48,6 +49,9 @@ for (const { file, game } of loadGames()) {
       report(file, `duplicate report_id "${r.report_id}" within the same game`);
     }
     ids.add(r.report_id);
+    if (r.app && !isKnownApp(r.app)) {
+      report(file, `report ${r.report_id} uses unknown app "${r.app}"`);
+    }
     if (!r.tested_at) report(file, `report ${r.report_id} missing tested_at`);
     if (!r.status) report(file, `report ${r.report_id} missing status`);
   }

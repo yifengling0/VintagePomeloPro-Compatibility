@@ -1,6 +1,7 @@
 ---
 import type { Game } from '../lib/types';
 import { RENDERER_META, summarize } from '../lib/filters';
+import { appLabel } from '../lib/apps';
 import { withBase } from '../lib/url';
 import CompatibilityBadge from './CompatibilityBadge.astro';
 
@@ -36,7 +37,7 @@ const rendererText = s.renderer
 
   <dl class="mt-auto space-y-1 pt-4 text-xs text-slate-300">
     <div class="flex gap-1.5">
-      <dt class="shrink-0 text-slate-500">VP</dt>
+      <dt class="shrink-0 text-slate-500">{appLabel(s.app) || '应用'}</dt>
       <dd class="truncate">{s.winehua_version ?? '—'} · {rendererText}</dd>
     </div>
     <div class="flex gap-1.5">

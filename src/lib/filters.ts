@@ -1,5 +1,6 @@
-import type { Game, Renderer, Status } from './types';
-import { latestReport } from './status';
+import type { AppSummary, Game, Renderer, Report } from './types';
+import { sortReports } from './status';
+import { APPS } from './apps';
 
 export const RENDERER_ORDER: Renderer[] = [
   'dxvk',
@@ -50,6 +51,10 @@ export function genreLabel(g: string): string {
   return GENRE_LABELS[g.toLowerCase()] ?? g;
 }
 
+export function appOptions() {
+  return APPS;
+}
+
 export function distinctGenres(games: Game[]): string[] {
   const seen = new Set<string>();
   for (const g of games) {
@@ -69,19 +74,9 @@ export function distinctGpus(games: Game[]): string[] {
   return [...seen].sort();
 }
 
-export interface Summary {
-  status: Status;
-  winehua_version: string | null;
-  renderer: Renderer | null;
-  renderer_version: string | null;
-  gpu: string | null;
-  device_model: string | null;
-  tested_at: string;
-}
-
-export function summarize(g: Game): Summary {
-  const rep = latestReport(g);
+function toSummary(rep: Report): AppSummary {
   return {
+    app: rep.app ?? '',
     status: rep.status,
     winehua_version: rep.winehua_version ?? null,
     renderer: rep.renderer?.backend ?? null,
@@ -90,4 +85,27 @@ export function summarize(g: Game): Summary {
     device_model: rep.device?.model ?? null,
     tested_at: rep.tested_at,
   };
+}
+
+/** The game's current compatibility state within a specific app (or overall when omitted). */
+export function summarizeFor(game: Game, app?: string): AppSummary | null {
+  const reports = app ? game.reports.filter((r) => r.app === app) : game.reports;
+  if (!reports.length) return null;
+  return toSummary(sortReports(reports)[0]);
+}
+
+/** The game's latest compatibility state across all apps. */
+export function summarize(game: Game): AppSummary {
+  return (
+    summarizeFor(game) ?? {
+      app: '',
+      status: 'unknown',
+      winehua_version: null,
+      renderer: null,
+      renderer_version: null,
+      gpu: null,
+      device_model: null,
+      tested_at: game.updated_at,
+    }
+  );
 }

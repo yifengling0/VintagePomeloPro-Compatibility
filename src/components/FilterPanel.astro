@@ -2,16 +2,18 @@
 import type { Game } from '../lib/types';
 import { STATUS_META, STATUS_ORDER } from '../lib/status';
 import { RENDERER_META, RENDERER_ORDER, distinctGenres, distinctGpus, genreLabel } from '../lib/filters';
+import { APPS } from '../lib/apps';
 
 interface Props {
   games: Game[];
+  app?: string;
   status?: string;
   renderer?: string;
   genre?: string;
   gpu?: string;
 }
 
-const { games, status = '', renderer = '', genre = '', gpu = '' } = Astro.props;
+const { games, app = '', status = '', renderer = '', genre = '', gpu = '' } = Astro.props;
 const genres = distinctGenres(games);
 const gpus = distinctGpus(games);
 
@@ -30,8 +32,20 @@ const labelClass = 'block text-xs font-medium text-slate-400 mb-1.5';
 </label>
 
 <div
-  class="grid max-h-0 grid-cols-2 gap-3 overflow-hidden transition-all duration-200 peer-checked:max-h-[480px] md:max-h-none md:grid-cols-4 md:gap-3"
+  class="grid max-h-0 grid-cols-2 gap-3 overflow-hidden transition-all duration-200 peer-checked:max-h-[720px] md:max-h-none md:grid-cols-3 xl:grid-cols-5 md:gap-3"
 >
+  <div>
+    <label class={labelClass} for="vpp-app">应用</label>
+    <select id="vpp-app" class={selectClass}>
+      <option value="">全部</option>
+      {APPS.map((a) => (
+        <option value={a.id} selected={app === a.id}>
+          {a.name_zh}
+        </option>
+      ))}
+    </select>
+  </div>
+
   <div>
     <label class={labelClass} for="vpp-status">兼容状态</label>
     <select id="vpp-status" class={selectClass}>

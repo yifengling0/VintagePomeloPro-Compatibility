@@ -49,6 +49,7 @@ reports:
       issue: null
       user: null
     tested_at: 2026-08-22
+    app: vintagepomelopro
     winehua_version: "6.2.0"
     device:
       model: Mate 80
@@ -85,6 +86,7 @@ reports:
       issue: null
       user: null
     tested_at: 2026-08-23
+    app: vintagepomelopro
     winehua_version: "6.2.0"
     device:
       model: Mate 80
@@ -110,6 +112,44 @@ reports:
     workarounds: []
     notes: >
       升级到 DXVK 2.6.2 后仍然可玩，性能略有改善。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
+
+  - report_id: maintainer-tomb-raider-2013-0003
+    source:
+      type: maintainer
+      issue: null
+      user: null
+    tested_at: 2026-08-21
+    app: vintagepomelo
+    winehua_version: "1.2.6"
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: null
+    renderer:
+      backend: virgl
+      version: null
+    graphics_api:
+      api: opengl
+    architecture:
+      game: x64
+      wine: x64
+    status: minor_issues
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms:
+      - 主界面字体边缘模糊
+    workarounds: []
+    notes: >
+      旧柚（非 Pro）在 VirGL 下可进入游戏，但文字渲染有轻微模糊。
     evidence:
       screenshots: []
       logs: []

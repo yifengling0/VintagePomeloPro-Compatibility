@@ -55,6 +55,7 @@ export interface Report {
   report_id: string;
   source: ReportSource;
   tested_at: string;
+  app?: string; // app id recorded in src/lib/apps.ts (e.g. vintagepomelopro, vintagepomelo)
   winehua_version?: string | null;
   device?: ReportDevice;
   renderer?: ReportRenderer;
@@ -95,6 +96,18 @@ export interface Game {
   reports: Report[];
 }
 
+/** A game's "current" compatibility state within a specific app (or overall). */
+export interface AppSummary {
+  app: string;
+  status: Status;
+  winehua_version: string | null;
+  renderer: Renderer | null;
+  renderer_version: string | null;
+  gpu: string | null;
+  device_model: string | null;
+  tested_at: string;
+}
+
 /** Shape serialized into the page for the client-side database UI. */
 export interface ClientGame {
   slug: string;
@@ -104,12 +117,10 @@ export interface ClientGame {
   developer: string[];
   publisher: string[];
   genres: string[];
-  status: Status;
-  winehua_version: string | null;
-  renderer: string | null;
-  renderer_version: string | null;
-  gpu: string | null;
-  device_model: string | null;
-  updated_at: string;
   aliases: string[];
+  updated_at: string;
+  /** Latest report across all apps. */
+  latest: AppSummary;
+  /** Current state per app id (only for apps the game was tested under). */
+  by_app: Record<string, AppSummary>;
 }

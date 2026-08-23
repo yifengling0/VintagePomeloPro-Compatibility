@@ -53,7 +53,16 @@ VintagePomeloPro-Compatibility/
 3. **历史报告永不覆盖**。新报告总是追加为新的 `reports[]` 条目。
 4. **不再猜兼容状态**。兼容状态只能来自真实报告（用户提交 / 维护者测试 / CI 测试），不能通过网络搜索推断。
 5. **兼容状态是固定枚举**：`perfect` / `playable` / `minor_issues` / `major_issues` / `broken` / `unknown`。
-6. **每条报告都记录 VintagePomeloPro 版本**（`winehua_version`），因为同一个游戏在不同应用版本 + 渲染器下结果可能完全不同。
+6. **每条报告都记录 App + 应用版本**（`app` + `winehua_version`），同一个游戏在旧柚 Pro 与旧柚下、不同应用版本与渲染器下结果可能完全不同。
+
+## App 清单（可维护）
+
+数据库同时跟踪以下应用，清单集中在 [`src/lib/apps.ts`](src/lib/apps.ts)，新增应用只需在 `APPS` 里加一项，并把对应报告的 `app` 指向其 `id`：
+
+| id | 中文名 | 英文名 |
+| --- | --- | --- |
+| `vintagepomelopro` | 旧柚 Pro | VintagePomeloPro |
+| `vintagepomelo` | 旧柚 | VintagePomelo |
 
 ---
 
@@ -140,6 +149,7 @@ reports:
     source:
       type: maintainer
     tested_at: 2026-08-23
+    app: vintagepomelopro
     winehua_version: "6.2.0"
     device:
       model: Mate 80

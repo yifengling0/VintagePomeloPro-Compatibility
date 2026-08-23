@@ -1,7 +1,8 @@
 import MiniSearch from 'minisearch';
 import { STATUS_META } from '../lib/status';
 import { RENDERER_META } from '../lib/filters';
-import type { ClientGame, Renderer, Status } from '../lib/types';
+import { appLabel } from '../lib/apps';
+import type { AppSummary, ClientGame, Renderer, Status } from '../lib/types';
 
 const PER_PAGE_OPTIONS = [24, 48, 96];
 const BASE_URL = import.meta.env.BASE_URL;
@@ -46,6 +47,7 @@ function escapeHtml(value: string): string {
 
 interface State {
   q: string;
+  app: string;
   status: string;
   renderer: string;
   genre: string;
@@ -60,6 +62,7 @@ export function initDatabase(): void {
   const countEl = document.getElementById('vpp-count')!;
   const paginationEl = document.getElementById('vpp-pagination')!;
   const searchEl = document.getElementById('vpp-search') as HTMLInputElement | null;
+  const appEl = document.getElementById('vpp-app') as HTMLSelectElement | null;
   const statusEl = document.getElementById('vpp-status') as HTMLSelectElement | null;
   const rendererEl = document.getElementById('vpp-renderer') as HTMLSelectElement | null;
   const genreEl = document.getElementById('vpp-genre') as HTMLSelectElement | null;
@@ -106,6 +109,7 @@ export function initDatabase(): void {
 
   let state: State = {
     q: params.get('q') ?? '',
+    app: params.get('app') ?? '',
     status: params.get('status') ?? '',
     renderer: params.get('renderer') ?? '',
     genre: params.get('genre') ?? '',
@@ -116,6 +120,7 @@ export function initDatabase(): void {
 
   function setControls(): void {
     if (searchEl) searchEl.value = state.q;
+    if (appEl) appEl.value = state.app;
     if (statusEl) statusEl.value = state.status;
     if (rendererEl) rendererEl.value = state.renderer;
     if (genreEl) genreEl.value = state.genre;
@@ -123,11 +128,19 @@ export function initDatabase(): void {
     if (perEl) perEl.value = String(state.per);
   }
 
-  function matched(game: ClientGame): boolean {
-    if (state.status && game.status !== state.status) return false;
-    if (state.renderer && game.renderer !== state.renderer) return false;
-    if (state.genre && !game.genres.some((g) => g === state.genre)) return false;
-    if (state.gpu && game.gpu !== state.gpu) return false;
+  /** The compatibility state shown/filtered for a game, honouring the App filter. */
+  function effective(g: ClientGame): AppSummary | null {
+    if (state.app) return g.by_app[state.app] ?? null;
+    return g.latest;
+  }
+
+  function matched(g: ClientGame): boolean {
+    const e = effective(g);
+    if (!e) return false;
+    if (state.status && e.status !== state.status) return false;
+    if (state.renderer && e.renderer !== state.renderer) return false;
+    if (state.gpu && e.gpu !== state.gpu) return false;
+    if (state.genre && !g.genres.some((gg) => gg === state.genre)) return false;
     return true;
   }
 
@@ -135,7 +148,10 @@ export function initDatabase(): void {
     const query = state.q.trim();
     if (!query) {
       return [...games].sort(
-        (a, b) => b.updated_at.localeCompare(a.updated_at) || b.release_year - a.release_year,
+        (a, b) =>
+          b.updated_at.localeCompare(a.updated_at) ||
+          b.release_year - a.release_year ||
+          a.name.localeCompare(b.name),
       );
     }
     const search = mini.search(query);
@@ -155,16 +171,17 @@ export function initDatabase(): void {
     const start = (state.page - 1) * state.per;
     const pageGames = list.slice(start, start + state.per);
 
-    const activeFilters = Number(Boolean(state.status)) +
+    const activeFilters =
+      Number(Boolean(state.app)) +
+      Number(Boolean(state.status)) +
       Number(Boolean(state.renderer)) +
       Number(Boolean(state.genre)) +
       Number(Boolean(state.gpu));
-    countEl.textContent = state.q || activeFilters
-      ? `${total} 个结果`
-      : `共 ${total} 款游戏`;
+    countEl.textContent =
+      state.q || activeFilters ? `${total} 个结果` : `共 ${total} 款游戏`;
 
     resultsEl.innerHTML = pageGames
-      .map(cardHTML)
+      .map((g) => cardHTML(g, effective(g)!))
       .join('');
     if (pageGames.length === 0) {
       resultsEl.innerHTML =
@@ -225,6 +242,7 @@ export function initDatabase(): void {
   function syncUrl(): void {
     const p = new URLSearchParams();
     if (state.q) p.set('q', state.q);
+    if (state.app) p.set('app', state.app);
     if (state.status) p.set('status', state.status);
     if (state.renderer) p.set('renderer', state.renderer);
     if (state.genre) p.set('genre', state.genre);
@@ -237,10 +255,11 @@ export function initDatabase(): void {
     window.history.replaceState(null, '', next);
   }
 
-  function cardHTML(g: ClientGame): string {
-    const meta = STATUS_META[g.status as Status] ?? STATUS_META.unknown;
-    const rendererLabel = g.renderer
-      ? `${RENDERER_META[g.renderer as Renderer]?.label ?? g.renderer}${g.renderer_version ? ` ${escapeHtml(g.renderer_version)}` : ''}`
+  function cardHTML(g: ClientGame, e: AppSummary): string {
+    const meta = STATUS_META[e.status as Status] ?? STATUS_META.unknown;
+    const appName = e.app ? appLabel(e.app) : '';
+    const rendererText = e.renderer
+      ? `${RENDERER_META[e.renderer as Renderer]?.label ?? e.renderer}${e.renderer_version ? ` ${escapeHtml(e.renderer_version)}` : ''}`
       : '—';
     const href = `${BASE_URL}games/${g.slug}/`;
     const nameZh = g.name_zh ? `<p class="truncate text-sm text-slate-400">${escapeHtml(g.name_zh)}</p>` : '';
@@ -261,8 +280,8 @@ export function initDatabase(): void {
         </div>
         <p class="text-xs text-slate-400"><span>${g.release_year}</span>${dev}</p>
         <dl class="mt-auto space-y-1 pt-4 text-xs text-slate-300">
-          <div class="flex gap-1.5"><dt class="shrink-0 text-slate-500">VP</dt><dd class="truncate">${g.winehua_version ? escapeHtml(g.winehua_version) : '—'} · ${rendererLabel}</dd></div>
-          <div class="flex gap-1.5"><dt class="shrink-0 text-slate-500">设备</dt><dd class="truncate">${g.device_model ? escapeHtml(g.device_model) : '—'}${g.gpu ? ` · ${escapeHtml(g.gpu)}` : ''}</dd></div>
+          <div class="flex gap-1.5"><dt class="shrink-0 text-slate-500">${escapeHtml(appName) || '应用'}</dt><dd class="truncate">${e.winehua_version ? escapeHtml(e.winehua_version) : '—'} · ${rendererText}</dd></div>
+          <div class="flex gap-1.5"><dt class="shrink-0 text-slate-500">设备</dt><dd class="truncate">${e.device_model ? escapeHtml(e.device_model) : '—'}${e.gpu ? ` · ${escapeHtml(e.gpu)}` : ''}</dd></div>
           <div class="flex gap-1.5"><dt class="shrink-0 text-slate-500">更新</dt><dd>${escapeHtml(g.updated_at)}</dd></div>
         </dl>
       </article>`;
@@ -270,6 +289,7 @@ export function initDatabase(): void {
 
   function readStateFromControls(): void {
     state.q = searchEl?.value ?? '';
+    state.app = appEl?.value ?? '';
     state.status = statusEl?.value ?? '';
     state.renderer = rendererEl?.value ?? '';
     state.genre = genreEl?.value ?? '';
@@ -278,12 +298,16 @@ export function initDatabase(): void {
   }
 
   function reset(): void {
-    state = { q: '', status: '', renderer: '', genre: '', gpu: '', page: 1, per: state.per };
+    state = { q: '', app: '', status: '', renderer: '', genre: '', gpu: '', page: 1, per: state.per };
     setControls();
     render();
   }
 
   searchEl?.addEventListener('input', () => {
+    readStateFromControls();
+    render();
+  });
+  appEl?.addEventListener('change', () => {
     readStateFromControls();
     render();
   });

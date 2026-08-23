@@ -34,11 +34,23 @@ body:
       description: 可选，便于自动关联元数据
       placeholder: "例如 203160"
 
+  - type: dropdown
+    id: app
+    attributes:
+      label: App
+      description: 使用哪个应用进行测试
+      options:
+        - 旧柚 Pro (VintagePomeloPro)
+        - 旧柚 (VintagePomelo)
+        - 其他 / 不确定
+    validations:
+      required: true
+
   - type: input
     id: winehua_version
     attributes:
-      label: VintagePomeloPro 版本
-      description: 你使用的旧柚 Pro 应用版本，非常重要
+      label: 应用版本
+      description: 你使用的应用版本，非常重要
       placeholder: "例如 6.2.0"
     validations:
       required: true

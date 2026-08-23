@@ -128,7 +128,8 @@
         "report_id",
         "source",
         "tested_at",
-        "status"
+        "status",
+        "app"
       ],
       "properties": {
         "report_id": {
@@ -150,6 +151,11 @@
         "tested_at": {
           "type": "string",
           "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "app": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which app this report was produced with; must be an id from the app registry (src/lib/apps.ts)."
         },
         "winehua_version": {
           "type": ["string", "null"]

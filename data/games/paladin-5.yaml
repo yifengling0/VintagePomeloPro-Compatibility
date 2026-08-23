@@ -50,6 +50,7 @@ reports:
       issue: null
       user: null
     tested_at: 2026-08-23
+    app: vintagepomelopro
     winehua_version: "6.2.0"
     device:
       model: Mate 80

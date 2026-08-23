@@ -34,7 +34,7 @@ STEP 14 创建 Pull Request
 5. 身份解析优先级：`Steam AppID` → `IGDB ID` → `GOG ID` → 正式英文名 + 发行年份 → `aliases` → 模糊匹配。
 6. 不能仅因名称相似就合并游戏（例如 `Resident Evil 2 (1998)` 与 `(2019)` 是不同的游戏）。
 7. 兼容状态只能来自真实报告，**禁止通过网络搜索推断**。
-8. 每条报告必须记录 `winehua_version`（VintagePomeloPro 应用版本）、`renderer.backend` 与 `renderer.version`。
+8. 每条报告必须记录 `app`（旧柚 Pro / 旧柚 的 id）、`winehua_version`（应用版本）、`renderer.backend` 与 `renderer.version`。
 9. 元数据不确定时，设置 `metadata_confidence: low` 并标记 `needs-review`，**不得猜测**。
 10. Agent 通常只能修改 `data/games/**`。
 
