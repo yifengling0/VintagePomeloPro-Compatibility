@@ -1,0 +1,85 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: white-album-2
+slug: white-album-2
+
+name: White Album 2
+name_zh: 白色相簿2
+
+aliases:
+  - WHITE ALBUM2
+  - "White Album 2: Introductory Chapter"
+  - "White Album 2: Closing Chapter"
+
+release_date: 2010-03-26
+release_year: 2010
+
+developer:
+  - Leaf
+
+publisher:
+  - Leaf
+
+genres:
+  - visual_novel
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: null
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: wikipedia
+    url: https://en.wikipedia.org/wiki/White_Album_2
+  - type: vndb
+    id: "7771"
+    url: https://vndb.org/v7771
+
+metadata_confidence: medium
+
+created_at: 2026-09-12
+updated_at: 2026-09-12
+
+reports:
+  - report_id: issue-2
+    source:
+      type: github_issue
+      issue: 2
+      user: 1712726322glitch114
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/2
+    tested_at: 2026-09-10
+    app: vintagepomelopro
+    winehua_version: "1.2.8"
+    device:
+      model: HUAWEI Pura X
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: "7.0.0.105"
+    renderer:
+      backend: dxvk
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: x86
+      wine: null
+    status: perfect
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms:
+      - CG 加载较慢
+    workarounds: []
+    notes: >
+      正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

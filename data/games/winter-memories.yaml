@@ -1,0 +1,79 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: winter-memories
+slug: winter-memories
+
+name: Winter Memories
+name_zh: 冬日狂想曲
+
+release_date: 2024-01-05
+release_year: 2024
+
+developer:
+  - Dojin Otome
+
+publisher:
+  - Kagura Games
+
+genres:
+  - rpg
+  - adventure
+  - simulation
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: "2495450"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "2495450"
+    url: https://store.steampowered.com/app/2495450/
+
+metadata_confidence: high
+
+created_at: 2026-09-12
+updated_at: 2026-09-12
+
+reports:
+  - report_id: issue-4
+    source:
+      type: github_issue
+      issue: 4
+      user: IChuJianI
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/4
+    tested_at: 2026-09-10
+    app: vintagepomelo
+    winehua_version: "4.0.1"
+    device:
+      model: HUAWEI MateBook Pro
+      soc: null
+      gpu: Maleoon 916
+      os: HarmonyOS
+      os_version: "7.0.0.105"
+    renderer:
+      backend: other
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: x86
+      wine: null
+    status: perfect
+    performance:
+      fps_avg: 60
+      fps_min: 30
+      fps_max: 60
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: >
+      游戏版本 v1.0.4，全部正常。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
