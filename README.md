@@ -89,7 +89,13 @@ Renderer 枚举：`virgl` / `dxvk` / `vkd3d` / `wined3d` / `native_opengl` / `ot
 2. 选择 **Compatibility Report** 表单。
 3. 至少填写：游戏名称、VintagePomeloPro 版本、设备型号、渲染后端、兼容状态、问题描述。
 
-提交后会打上 `compatibility-report` 标签，后续由兼容性 Agent 处理（当前阶段 Agent 自动化尚在后续开发中）。
+提交后会自动打上 `compatibility-report` 标签，并由 **兼容性 Agent**（`compatibility-agent.yml` workflow）自动处理：
+
+- **已收录游戏**：新报告直接追加到对应 YAML 的 `reports[]`，历史报告永不覆盖。
+- **Steam 上能唯一确认的新游戏**：自动新建 `data/games/<slug>.yaml`，元数据取自 Steam 商店页（AppID / 发行日期 / 开发商 / 类型）。
+- **无法确认的游戏**（非 Steam、重名多候选、缺少必填字段）：打上 `needs-review` 标签并在 issue 中说明原因，不会臆造元数据。
+
+处理结果是 GitHub Actions 自动创建的数据 PR（`agent/issue-<编号>-<slug>` 分支），合并 PR 后站点自动更新。
 
 ---
 
@@ -186,14 +192,20 @@ reports:
 
 ---
 
-## 自动化 Agent（后续开发）
+## 自动化 Agent
 
-当前版本实现的是**数据层与静态网站**。自动读取 GitHub Issue、补全元数据、去重并创建 Pull Request 的兼容性 Agent 将在后续阶段实现，设计指南见：
+兼容性 Agent **v1 已上线**（`.github/workflows/compatibility-agent.yml` + `scripts/ingest-issue.ts`）：issue 提交后自动解析表单、匹配现有游戏、生成数据变更并以独立分支创建 Pull Request，全流程不直接修改 `main`。
+
+当前 v1 的边界：
+
+- 新游戏的元数据只在 **Steam 商店可唯一确认** 时自动补全（用户填了 AppID，或商店搜索只有唯一/精确命中）。
+- 非 Steam 游戏或多候选歧义时转 `needs-review` 人工处理，**不臆造元数据**。
+- 设计与后续演进指南见：
 
 - [`docs/agent/AGENT_GUIDELINE.md`](docs/agent/AGENT_GUIDELINE.md)
 - [`docs/agent/METADATA_POLICY.md`](docs/agent/METADATA_POLICY.md)
 
-Agent 一旦上线，其行为必须遵守：
+Agent 行为必须遵守：
 
 - 不直接修改 `main`。
 - 不删除历史兼容性报告。

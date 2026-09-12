@@ -1,0 +1,95 @@
+name: Compatibility Agent
+
+# Turns a compatibility-report issue into a data/games/*.yaml change and a
+# pull request (docs/agent/AGENT_GUIDELINE.md). Issue bodies are untrusted
+# input: the ingest script only reads the form fields and never follows
+# instructions found inside an issue.
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to process
+        required: true
+        type: string
+
+concurrency:
+  group: compat-agent-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'compatibility-report')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Parse issue and generate data change
+        id: ingest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          npx tsx scripts/ingest-issue.ts "$ISSUE_NUMBER" --out-dir .
+          echo "action=$(jq -r .action agent-result.json)" >> "$GITHUB_OUTPUT"
+          echo "slug=$(jq -r '.slug // ""' agent-result.json)" >> "$GITHUB_OUTPUT"
+          echo "branch=$(jq -r '.branch // ""' agent-result.json)" >> "$GITHUB_OUTPUT"
+          cat agent-result.json
+
+      - name: Commit data change and open pull request
+        if: steps.ingest.outputs.action == 'created' || steps.ingest.outputs.action == 'appended'
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${{ steps.ingest.outputs.branch }}"
+          git add "data/games/${{ steps.ingest.outputs.slug }}.yaml"
+          git commit -m "data: compatibility report from issue #${ISSUE_NUMBER} (${{ steps.ingest.outputs.slug }})"
+          git push origin "${{ steps.ingest.outputs.branch }}"
+          PR_URL=$(gh pr create \
+            --base main \
+            --head "${{ steps.ingest.outputs.branch }}" \
+            --title "$(jq -r .pr_title agent-result.json)" \
+            --body-file agent-pr-body.md)
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Link pull request on the issue
+        if: steps.ingest.outputs.action == 'created' || steps.ingest.outputs.action == 'appended'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          PR_URL: ${{ steps.pr.outputs.pr_url }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label agent-complete
+          gh issue close "$ISSUE_NUMBER" --reason completed \
+            --comment "兼容性 Agent 已把本报告转换为数据变更：$PR_URL（PR 合并后站点自动更新）。"
+
+      - name: Ask for review
+        if: steps.ingest.outputs.action == 'needs-review'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label needs-review
+          gh issue comment "$ISSUE_NUMBER" --body-file agent-comment.md

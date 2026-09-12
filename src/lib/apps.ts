@@ -11,6 +11,7 @@ export interface AppMeta {
 export const APPS: AppMeta[] = [
   { id: 'vintagepomelopro', name: 'VintagePomeloPro', name_zh: '旧柚 Pro' },
   { id: 'vintagepomelo', name: 'VintagePomelo', name_zh: '旧柚' },
+  { id: 'unknown', name: 'Unknown', name_zh: '其他 / 不确定' },
 ];
 
 export function appMeta(id: string): AppMeta {
