@@ -1,0 +1,66 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+id: portal-2
+slug: portal-2
+name: Portal 2
+aliases: []
+release_date: 2011-04-18
+release_year: 2011
+developer:
+  - Valve
+publisher:
+  - Valve
+genres:
+  - action
+  - adventure
+platforms:
+  - Windows
+  - Linux
+external_ids:
+  steam: "620"
+  igdb: null
+  gog: null
+metadata_sources:
+  - type: steam
+    id: "620"
+    url: https://store.steampowered.com/app/620/
+metadata_confidence: high
+created_at: 2026-09-12
+updated_at: 2026-09-12
+reports:
+  - report_id: issue-5
+    source:
+      type: github_issue
+      issue: 5
+      user: yifengling0
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/5
+    tested_at: 2026-09-12
+    app: vintagepomelopro
+    winehua_version: 1.2.8
+    device:
+      model: HUAWEI Pura X
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: 7.0.0.105
+    renderer:
+      backend: dxvk
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: x64
+      wine: null
+    status: playable
+    performance:
+      fps_avg: 40
+      fps_min: 25
+      fps_max: 60
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: 自动化管线端到端测试，正常流程可完成
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
