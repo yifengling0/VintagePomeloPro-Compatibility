@@ -61,21 +61,39 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
+          BRANCH="${{ steps.ingest.outputs.branch }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "${{ steps.ingest.outputs.branch }}"
+          git checkout -b "$BRANCH"
           git add "data/games/${{ steps.ingest.outputs.slug }}.yaml"
           git commit -m "data: compatibility report from issue #${ISSUE_NUMBER} (${{ steps.ingest.outputs.slug }})"
-          git push origin "${{ steps.ingest.outputs.branch }}"
-          PR_URL=$(gh pr create \
-            --base main \
-            --head "${{ steps.ingest.outputs.branch }}" \
-            --title "$(jq -r .pr_title agent-result.json)" \
-            --body-file agent-pr-body.md)
+          git push --force origin "$BRANCH"
+
+          PR_URL=$(gh pr list --head "$BRANCH" --state open --json url --jq 'first(.[]).url // empty')
+          if [ -z "$PR_URL" ]; then
+            if ! PR_URL=$(gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "$(jq -r .pr_title agent-result.json)" \
+              --body-file agent-pr-body.md); then
+              echo "::warning::PR creation failed: $PR_URL"
+              PR_URL=""
+            fi
+          fi
+
+          if [ -z "$PR_URL" ]; then
+            # Repo setting "Allow GitHub Actions to create and approve pull
+            # requests" is off: leave a one-click, prefilled compare link.
+            TITLE=$(jq -r .pr_title agent-result.json)
+            BODY="兼容性 Agent 生成的数据 PR（来自 issue #${ISSUE_NUMBER}），合并前请核对内容。"
+            PR_LINK="https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?quick_pull=1&title=$(jq -rn --arg v "$TITLE" '$v|@uri')&body=$(jq -rn --arg v "$BODY" '$v|@uri')"
+            gh issue comment "$ISSUE_NUMBER" \
+              --body "数据文件已生成到分支 \`$BRANCH\`（当前仓库设置不允许 Actions 直接创建 PR）。点击此链接即可一键创建 PR 并核对合并：$PR_LINK"
+          fi
           echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
 
       - name: Link pull request on the issue
-        if: steps.ingest.outputs.action == 'created' || steps.ingest.outputs.action == 'appended'
+        if: startsWith(steps.pr.outputs.pr_url, 'https://')
         env:
           GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
