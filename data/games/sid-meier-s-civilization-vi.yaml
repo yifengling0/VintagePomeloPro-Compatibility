@@ -56,7 +56,7 @@ reports:
       url: null
     tested_at: 2026-10-18
     app: vintagepomelopro
-    winehua_version: null
+    winehua_version: "1.4.9"
     status: playable
     symptoms: []
     workarounds: []
