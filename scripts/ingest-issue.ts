@@ -28,6 +28,7 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { parse, stringify } from 'yaml';
 import { loadGames } from './load';
+import { resolveExistingGame } from './match-game';
 import { isKnownApp } from '../src/lib/apps';
 import type { Game, Renderer, Report, Status } from '../src/lib/types';
 
@@ -248,21 +249,6 @@ function steamSearchTerms(name: string): string[] {
   const leadingNonCjk = full.replace(/[\u3400-\u9fff\u3040-\u30ff].*$/u, '').trim();
   if (leadingNonCjk && leadingNonCjk !== full) terms.push(leadingNonCjk);
   return terms;
-}
-
-function gameNameKeys(game: Game): string[] {
-  return [game.name, game.name_zh ?? '', ...(game.aliases ?? [])]
-    .filter((t) => t && t.trim())
-    .map(norm);
-}
-
-function findExistingGame(games: Game[], name: string, steamAppid: string | null): Game | undefined {
-  if (steamAppid) {
-    const byId = games.find((g) => g.external_ids?.steam && String(g.external_ids.steam) === steamAppid);
-    if (byId) return byId;
-  }
-  const n = norm(name);
-  return games.find((g) => gameNameKeys(g).includes(n));
 }
 
 function hasReportId(games: Game[], reportId: string): boolean {
@@ -589,7 +575,14 @@ async function main(): Promise<void> {
 
   const report = buildReport(fields, issue);
   const userAppid = (fields['Steam AppID'] ?? '').replace(/\D/g, '') || null;
-  const existing = findExistingGame(games, name, userAppid);
+  const matchExisting = resolveExistingGame(games, name, userAppid);
+  if (matchExisting.conflict) {
+    result.action = 'needs-review';
+    result.reason = matchExisting.conflict;
+    writeOut(OUT_DIR, 'agent-comment.md', `游戏名称与 Steam AppID 存在冲突，未修改数据。请核实：${matchExisting.conflict}`);
+    return done();
+  }
+  const existing = matchExisting.game;
 
   if (existing) {
     const raw = readFileSync(join(process.cwd(), 'data', 'games', `${existing.slug}.yaml`), 'utf8');
