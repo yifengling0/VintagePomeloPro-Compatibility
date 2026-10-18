@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import RecentStrip from '../components/RecentStrip.astro';
 import SearchBar from '../components/SearchBar.astro';
 import FilterPanel from '../components/FilterPanel.astro';
 import GameCard from '../components/GameCard.astro';
@@ -16,17 +18,10 @@ const json = JSON.stringify(clientGames).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout>
-  <section class="mx-auto max-w-6xl px-4 py-10">
-    <div class="max-w-2xl">
-      <p class="text-xs font-medium uppercase tracking-widest text-brand-300">Vintage Pomelo Pro</p>
-      <h1 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">游戏兼容性数据库</h1>
-      <p class="mt-2 text-slate-400">
-        搜索、筛选并查看游戏在 VintagePomeloPro 上的兼容性报告。历史测试不会被覆盖，兼容状态完全来自真实报告。
-      </p>
-    </div>
-  </section>
+  <Hero games={games} />
+  <RecentStrip games={games} />
 
-  <section class="mx-auto max-w-6xl px-4">
+  <section id="database" class="mx-auto max-w-6xl scroll-mt-20 px-4 pt-10">
     <SearchBar />
     <div class="mt-4">
       <FilterPanel games={games} />

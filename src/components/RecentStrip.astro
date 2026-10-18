@@ -1,0 +1,72 @@
+---
+import type { Game } from '../lib/types';
+import { STATUS_META } from '../lib/status';
+import { withBase } from '../lib/url';
+
+interface Props {
+  games: Game[];
+  count?: number;
+}
+
+const { games, count = 8 } = Astro.props;
+const recent = games.slice(0, count);
+---
+
+<section class="mx-auto max-w-6xl px-4 pt-8">
+  <div class="mb-3 flex items-end justify-between">
+    <div>
+      <h2 class="text-base font-semibold text-white">最近更新</h2>
+      <p class="text-xs text-slate-400">最新收录与报告变动 · 封面来自 Steam 商店</p>
+    </div>
+    <a href="#database" class="text-xs text-brand-300 hover:text-brand-200">查看全部 ↓</a>
+  </div>
+
+  <div class="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2">
+    {recent.map((game) => {
+      const appid = game.external_ids?.steam ?? null;
+      const cover = appid
+        ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${appid}/header.jpg`
+        : null;
+      const s = game.reports.length ? STATUS_META[game.reports[0]!.status] : null;
+      return (
+        <a
+          href={withBase(`/games/${game.slug}/`)}
+          class="group w-40 shrink-0 snap-start overflow-hidden rounded-xl border border-slate-700/60 bg-slate-800/50 transition hover:border-brand-500/40 hover:bg-slate-800 sm:w-48"
+        >
+          <div class="relative aspect-[460/215] bg-gradient-to-br from-slate-700/80 to-slate-800">
+            <span
+              class="absolute inset-0 grid place-items-center text-2xl font-bold text-slate-500"
+              aria-hidden="true"
+            >
+              {game.name.charAt(0)}
+            </span>
+            {cover && (
+              <img
+                src={cover}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover transition group-hover:scale-[1.03]"
+                onerror="this.remove()"
+              />
+            )}
+            {s && (
+              <span
+                class={`absolute bottom-1.5 left-1.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium backdrop-blur ${s.badge}`}
+              >
+                <span class={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+                {s.zh}
+              </span>
+            )}
+          </div>
+          <div class="p-2.5">
+            <p class="truncate text-sm font-medium text-white group-hover:text-brand-100">
+              {game.name_zh || game.name}
+            </p>
+            <p class="truncate text-xs text-slate-500">{game.name_zh ? game.name : game.developer[0] ?? ''}</p>
+          </div>
+        </a>
+      );
+    })}
+  </div>
+</section>

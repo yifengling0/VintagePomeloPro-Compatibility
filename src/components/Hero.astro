@@ -1,0 +1,115 @@
+---
+import type { Game } from '../lib/types';
+import { STATUS_META, STATUS_ORDER, currentStatus } from '../lib/status';
+
+interface Props {
+  games: Game[];
+}
+
+const { games } = Astro.props;
+
+const totalReports = games.reduce((n, g) => n + g.reports.length, 0);
+const statusCounts = new Map<string, number>();
+let playableCount = 0;
+for (const g of games) {
+  const s = currentStatus(g);
+  statusCounts.set(s, (statusCounts.get(s) ?? 0) + 1);
+  if (s === 'perfect' || s === 'playable') playableCount += 1;
+}
+const playablePct = games.length ? Math.round((playableCount / games.length) * 100) : 0;
+const distribution = STATUS_ORDER.map((s) => ({
+  status: s,
+  zh: STATUS_META[s].zh,
+  dot: STATUS_META[s].dot,
+  count: statusCounts.get(s) ?? 0,
+})).filter((d) => d.count > 0);
+---
+
+<section class="mx-auto max-w-6xl px-4 pt-8">
+  <div class="relative overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-900">
+    <!-- 装饰：光斑 + 点阵网格 + 漂浮徽标 -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -right-24 -top-32 h-80 w-80 rounded-full bg-amber-500/25 blur-3xl"></div>
+      <div class="absolute -left-20 top-16 h-64 w-64 rounded-full bg-brand-500/25 blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/3 h-48 w-96 rounded-full bg-emerald-500/10 blur-3xl"></div>
+      <svg class="absolute inset-0 h-full w-full opacity-[0.12]">
+        <defs>
+          <pattern id="hero-dots" width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="1.2" cy="1.2" r="1.2" fill="#94a3b8" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hero-dots)" />
+      </svg>
+      <span class="absolute right-[8%] top-8 hidden rotate-12 rounded-2xl bg-slate-800/80 p-3 text-2xl shadow-lg ring-1 ring-slate-700/60 sm:block">🎮</span>
+      <span class="absolute bottom-10 right-[16%] hidden -rotate-6 rounded-2xl bg-slate-800/80 p-3 text-2xl shadow-lg ring-1 ring-slate-700/60 sm:block">🕹️</span>
+      <span class="absolute right-[28%] top-24 hidden rotate-3 rounded-2xl bg-slate-800/60 p-2 text-xl shadow ring-1 ring-slate-700/60 lg:block">🍊</span>
+    </div>
+
+    <div class="relative grid gap-8 p-6 sm:p-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+      <div>
+        <p class="text-xs font-medium uppercase tracking-widest text-amber-300">Vintage Pomelo Pro</p>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+          <span class="text-white">游戏</span><span
+            class="bg-gradient-to-r from-brand-300 via-sky-200 to-amber-200 bg-clip-text text-transparent"
+            >兼容性</span
+          ><span class="text-white">数据库</span>
+        </h1>
+        <p class="mt-3 max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base">
+          搜索、筛选并查看游戏在旧柚 Pro 上的真实兼容性报告。历史测试不会被覆盖，兼容状态完全来自用户提交与维护者实测。
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a
+            href="https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/new/choose"
+            target="_blank"
+            rel="noopener"
+            class="rounded-xl bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600"
+          >
+            提交兼容报告
+          </a>
+          <a
+            href="#database"
+            class="rounded-xl border border-slate-700 bg-slate-800/60 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-600 hover:text-white"
+          >
+            浏览数据库 ↓
+          </a>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-700/60 bg-slate-800/60 p-5 backdrop-blur">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <p class="text-3xl font-bold text-white">{games.length}</p>
+            <p class="text-xs text-slate-400">收录游戏</p>
+          </div>
+          <div>
+            <p class="text-3xl font-bold text-white">{totalReports}</p>
+            <p class="text-xs text-slate-400">兼容报告</p>
+          </div>
+          <div>
+            <p class="text-3xl font-bold text-emerald-300">{playablePct}%</p>
+            <p class="text-xs text-slate-400">可正常游玩</p>
+          </div>
+        </div>
+
+        <p class="mt-5 text-xs text-slate-400">最新状态分布</p>
+        <div class="mt-2 flex h-2.5 w-full overflow-hidden rounded-full bg-slate-700/60">
+          {distribution.map((d) => (
+            <span
+              class={`h-full ${d.dot}`}
+              style={`width: ${(d.count / games.length) * 100}%`}
+              title={`${d.zh} ${d.count} 款`}
+            />
+          ))}
+        </div>
+        <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+          {distribution.map((d) => (
+            <span class="inline-flex items-center gap-1.5">
+              <span class={`h-1.5 w-1.5 rounded-full ${d.dot}`} />
+              {d.zh} {d.count}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
