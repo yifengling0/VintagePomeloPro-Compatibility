@@ -225,11 +225,29 @@ function splitWorkarounds(text: string): string[] {
 // ---------------------------------------------------------------------------
 
 function norm(value: string): string {
-  return value
+  return normalizeQuotes(value)
     .toLowerCase()
     .replace(/[®™]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/** Issue forms often carry typographic quotes (e.g. "Patrick‘s"); Steam titles use ASCII ones. */
+function normalizeQuotes(value: string): string {
+  return value.replace(/[\u2018\u2019\u201B`]/g, "'").replace(/[\u201C\u201D]/g, '"');
+}
+
+/**
+ * Search terms for the Steam store, most specific first. Mixed-language names
+ * ("Patrick's Parabox 帕特里克的箱子") never hit the store index as a whole;
+ * retrying with the leading non-CJK part recovers the exact title.
+ */
+function steamSearchTerms(name: string): string[] {
+  const full = normalizeQuotes(name.trim());
+  const terms = [full];
+  const leadingNonCjk = full.replace(/[\u3400-\u9fff\u3040-\u30ff].*$/u, '').trim();
+  if (leadingNonCjk && leadingNonCjk !== full) terms.push(leadingNonCjk);
+  return terms;
 }
 
 function gameNameKeys(game: Game): string[] {
@@ -365,26 +383,55 @@ async function matchSteam(name: string, userAppid: string | null): Promise<Steam
     return 'not-found';
   }
 
-  const [enItems, zhItems] = await Promise.all([steamSearch(name, 'english'), steamSearch(name, 'schinese')]);
-  const items = [...enItems, ...zhItems];
-  if (!items.length) return 'not-found';
+  const query = norm(name);
+  let rejectedHit = false;
+  let sawAmbiguity = false;
+  for (const term of steamSearchTerms(name)) {
+    const [enItems, zhItems] = await Promise.all([steamSearch(term, 'english'), steamSearch(term, 'schinese')]);
+    const unique = new Map<number, SteamSearchItem>();
+    for (const item of [...enItems, ...zhItems]) unique.set(item.id, item);
+    if (!unique.size) continue;
 
-  const unique = new Map<number, SteamSearchItem>();
-  for (const item of items) unique.set(item.id, item);
-  const n = norm(name);
-  const exact = [...unique.values()].filter((item) => norm(item.name) === n);
+    const n = norm(term);
+    const exact = [...unique.values()].filter((item) => norm(item.name) === n);
 
-  // Only adopt an identity that is unambiguous: a single hit, or exactly one
-  // exact-title hit. Otherwise the report needs a maintainer.
-  let chosen: SteamSearchItem | undefined;
-  if (unique.size === 1) chosen = [...unique.values()][0];
-  else if (exact.length === 1) chosen = exact[0];
+    // Only adopt an identity that is unambiguous: a single hit, or exactly one
+    // exact-title hit. Otherwise try the next search term; a report whose
+    // every term stays ambiguous needs a maintainer.
+    let chosen: SteamSearchItem | undefined;
+    if (unique.size === 1) chosen = [...unique.values()][0];
+    else if (exact.length === 1) chosen = exact[0];
 
-  if (!chosen) return 'ambiguous';
-  const detailsEn = await steamAppDetails(chosen.id, 'english');
-  if (!detailsEn || detailsEn.type !== 'game') return 'ambiguous';
-  const detailsZh = await steamAppDetails(chosen.id, 'schinese');
-  return { appid: String(chosen.id), detailsEn, detailsZh };
+    if (!chosen) {
+      sawAmbiguity = true;
+      continue;
+    }
+    const detailsEn = await steamAppDetails(chosen.id, 'english');
+    if (!detailsEn || detailsEn.type !== 'game') {
+      sawAmbiguity = true;
+      continue;
+    }
+    const detailsZh = await steamAppDetails(chosen.id, 'schinese');
+
+    // Identity sanity check: the store hit must actually overlap the reported
+    // name (either direction, EN or ZH). A single fuzzy-search hit alone once
+    // matched 命运石之门 to the unrelated "STEINS;GATE RE:BOOT".
+    const nEn = norm(detailsEn.name);
+    const nZh = detailsZh ? norm(detailsZh.name) : '';
+    const overlaps =
+      nEn === query ||
+      nZh === query ||
+      nEn.includes(query) ||
+      (nZh !== '' && nZh.includes(query)) ||
+      query.includes(nEn) ||
+      (nZh !== '' && query.includes(nZh));
+    if (!overlaps) {
+      rejectedHit = true;
+      continue;
+    }
+    return { appid: String(chosen.id), detailsEn, detailsZh };
+  }
+  return sawAmbiguity || rejectedHit ? 'ambiguous' : 'not-found';
 }
 
 // ---------------------------------------------------------------------------
