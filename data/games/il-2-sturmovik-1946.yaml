@@ -1,0 +1,82 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+id: il-2-sturmovik-1946
+slug: il-2-sturmovik-1946
+name: "IL-2 Sturmovik: 1946"
+aliases: []
+release_date: 2008-06-13
+release_year: 2008
+developer:
+  - "1C: Maddox Games"
+publisher:
+  - Fulqrum Publishing
+genres:
+  - simulation
+platforms:
+  - Windows
+external_ids:
+  steam: "15320"
+  igdb: null
+  gog: null
+metadata_sources:
+  - type: steam
+    id: "15320"
+    url: https://store.steampowered.com/app/15320/
+metadata_confidence: high
+created_at: 2026-10-18
+updated_at: 2026-10-18
+reports:
+  - report_id: issue-11
+    source:
+      type: github_issue
+      issue: 11
+      user: Hx3589
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/11
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: 1.4.8
+    device:
+      model: Mate 80
+      soc: null
+      gpu: Maleoon 920
+      os: HarmonyOS
+      os_version: 7.0.0
+    renderer:
+      backend: dxvk
+      version: 2.6.2
+    graphics_api:
+      api: other
+    architecture:
+      game: x86
+      wine: null
+    status: broken
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: |-
+      游戏版本 v4.13.4m，游戏为 32 位 x86 程序（Steam 版）。通过 Steam 启动后 il2fb.exe 存活约 60~90 秒，
+      期间无任何游戏画面，随后收到 SIGSEGV（signal 11）崩溃退出。当天三次启动现象完全一致。
+
+      日志关键行：
+      [E] [WL_NAPI] [ProcReg] NCP child pid=30811 terminated signal/reason=11(0xb) name=Segmentation fault
+      [W] [WL_NAPI] [ProcReg] complete pid=30811 name=il2fb.exe exit=11 source=ncp-exit
+      （pid 23977、28489 等三次记录相同，详见附件日志）
+
+      崩溃进程为 Z:\Steam\steamapps\common\IL 2 Sturmovik 1946\il2fb.exe。
+      该游戏启动器捆绑自带 HotSpot JVM 1.3.1（bin\hotspot\jvm.dll）；
+      同一文件在 PC 端 Windows 11 下亦启动即 BEX（c0000005，故障模块 jvm.dll，
+      事件查看器记录可应要求提供），佐证为游戏自带 JVM 的兼容性问题。
+
+      已验证无效：dxvk2.6、dxvk1.10、VirGL 渲染路径。
+      现象与渲染后端选择无相关性。
+
+      [旧柚Pro 日志.zip](https://github.com/user-attachments/files/33623912/Pro.zip)
+    evidence:
+      screenshots: []
+      logs:
+        - https://github.com/user-attachments/files/33623912/Pro.zip
+      videos: []
