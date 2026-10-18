@@ -1,0 +1,63 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: the-hungry-lamb-traveling-in-the-late-ming-dynasty
+slug: the-hungry-lamb-traveling-in-the-late-ming-dynasty
+
+name: "The Hungry Lamb: Traveling in the Late Ming Dynasty"
+name_zh: 饿殍：明末千里行
+
+aliases:
+  - 明末：饿殍千里行
+  - 饿殍
+
+release_date: 2024-04-22
+release_year: 2024
+
+developer:
+  - 零创游戏(ZerocreationGame)
+
+publisher:
+  - 零创游戏(ZerocreationGame)
+  - 2P Games
+
+genres:
+  - adventure
+  - rpg
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: "2593370"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "2593370"
+    url: https://store.steampowered.com/app/2593370/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: maintainer-2026-10-18-the-hungry-lamb-traveling-in-the-late-ming-dynasty
+    source:
+      type: maintainer
+      issue: null
+      user: yifengling0
+      url: null
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: null
+    status: playable
+    symptoms: []
+    workarounds: []
+    notes: 维护者实测：Steam 版兼容，可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

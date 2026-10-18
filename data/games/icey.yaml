@@ -1,0 +1,62 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: icey
+slug: icey
+
+name: ICEY
+
+aliases:
+  - 艾希
+
+release_date: 2016-11-17
+release_year: 2016
+
+developer:
+  - FantaBlade Network
+
+publisher:
+  - XD
+
+genres:
+  - action
+  - adventure
+  - rpg
+
+platforms:
+  - Windows
+  - macOS
+
+external_ids:
+  steam: "553640"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "553640"
+    url: https://store.steampowered.com/app/553640/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: maintainer-2026-10-18-icey
+    source:
+      type: maintainer
+      issue: null
+      user: yifengling0
+      url: null
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: null
+    status: playable
+    symptoms: []
+    workarounds: []
+    notes: 维护者实测：Steam 版兼容，可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

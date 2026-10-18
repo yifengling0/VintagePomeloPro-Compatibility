@@ -1,0 +1,62 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: xuan-yuan-sword-2
+slug: xuan-yuan-sword-2
+
+name: Xuan-Yuan Sword 2
+name_zh: 轩辕剑贰
+
+aliases:
+  - 轩辕剑二
+
+release_date: 2021-02-07
+release_year: 2021
+
+developer:
+  - DOMO Studio
+  - SOFTSTAR ENTERTAINMENT
+
+publisher:
+  - 方块游戏(CubeGame)
+  - SOFTSTAR ENTERTAINMENT
+
+genres:
+  - rpg
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: "1508740"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "1508740"
+    url: https://store.steampowered.com/app/1508740/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: maintainer-2026-10-18-xuan-yuan-sword-2
+    source:
+      type: maintainer
+      issue: null
+      user: yifengling0
+      url: null
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: null
+    status: playable
+    symptoms: []
+    workarounds: []
+    notes: 维护者实测：Steam 版兼容，可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

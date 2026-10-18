@@ -1,0 +1,62 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: don-t-starve
+slug: don-t-starve
+
+name: Don't Starve
+name_zh: 饥荒
+
+aliases: []
+
+release_date: 2013-04-23
+release_year: 2013
+
+developer:
+  - Klei Entertainment
+
+publisher:
+  - Klei Entertainment
+
+genres:
+  - adventure
+  - simulation
+
+platforms:
+  - Windows
+  - macOS
+  - Linux
+
+external_ids:
+  steam: "219740"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "219740"
+    url: https://store.steampowered.com/app/219740/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: maintainer-2026-10-18-don-t-starve
+    source:
+      type: maintainer
+      issue: null
+      user: yifengling0
+      url: null
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: null
+    status: playable
+    symptoms: []
+    workarounds: []
+    notes: 维护者实测：Steam 版兼容，可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

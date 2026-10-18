@@ -1,0 +1,62 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: xuan-yuan-sword-the-gate-of-firmament
+slug: xuan-yuan-sword-the-gate-of-firmament
+
+name: "Xuan-Yuan Sword: The Gate of Firmament"
+name_zh: 轩辕剑外传 穹之扉
+
+aliases:
+  - 穹之扉
+
+release_date: 2016-02-25
+release_year: 2016
+
+developer:
+  - DOMO Studio
+  - SOFTSTAR ENTERTAINMENT
+
+publisher:
+  - 方块游戏(CubeGame)
+  - SOFTSTAR ENTERTAINMENT
+
+genres:
+  - rpg
+
+platforms:
+  - Windows
+
+external_ids:
+  steam: "427030"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "427030"
+    url: https://store.steampowered.com/app/427030/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: maintainer-2026-10-18-xuan-yuan-sword-the-gate-of-firmament
+    source:
+      type: maintainer
+      issue: null
+      user: yifengling0
+      url: null
+    tested_at: 2026-10-18
+    app: vintagepomelopro
+    winehua_version: null
+    status: playable
+    symptoms: []
+    workarounds: []
+    notes: 维护者实测：Steam 版兼容，可正常运行。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []

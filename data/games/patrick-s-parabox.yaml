@@ -1,0 +1,80 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+
+id: patrick-s-parabox
+slug: patrick-s-parabox
+
+name: "Patrick's Parabox"
+name_zh: 帕特里克的箱子
+
+aliases: []
+
+release_date: 2022-03-29
+release_year: 2022
+
+developer:
+  - Patrick Traynor
+
+publisher:
+  - Patrick Traynor
+
+genres:
+  - strategy
+
+platforms:
+  - Windows
+  - macOS
+  - Linux
+
+external_ids:
+  steam: "1260520"
+  igdb: null
+  gog: null
+
+metadata_sources:
+  - type: steam
+    id: "1260520"
+    url: https://store.steampowered.com/app/1260520/
+
+metadata_confidence: high
+
+created_at: 2026-10-18
+updated_at: 2026-10-18
+
+reports:
+  - report_id: issue-7
+    source:
+      type: github_issue
+      issue: 7
+      user: Awafune
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/7
+    tested_at: 2026-10-05
+    app: vintagepomelopro
+    winehua_version: "1.5"
+    device:
+      model: mateair12 2024（T91A）
+      soc: null
+      gpu: null
+      os: HarmonyOS
+      os_version: "6.1.0"
+    renderer:
+      backend: dxvk
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: x86
+      wine: null
+    status: perfect
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: 无问题。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
