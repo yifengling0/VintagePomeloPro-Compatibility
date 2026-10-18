@@ -20,6 +20,8 @@ jobs:
         run: npm ci
       - name: Validate data (Schema + duplicates)
         run: npm run validate
+      - name: Regression tests
+        run: npm test
       - name: Type check
         run: npm run check
       - name: Build

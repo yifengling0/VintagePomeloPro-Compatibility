@@ -3,6 +3,7 @@ import type { Game } from '../lib/types';
 import { RENDERER_META, summarize } from '../lib/filters';
 import { appLabel } from '../lib/apps';
 import { withBase } from '../lib/url';
+import GameArtwork from './GameArtwork.astro';
 import CompatibilityBadge from './CompatibilityBadge.astro';
 
 interface Props {
@@ -20,6 +21,7 @@ const rendererText = s.renderer
 <article
   class="group relative flex flex-col rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5 transition hover:border-brand-500/40 hover:bg-slate-800"
 >
+  <a href={href} class="mb-4 block" aria-label={`${game.name} 详情`}><GameArtwork game={game} /></a>
   <div class="mb-3 flex items-start justify-between gap-3">
     <div class="min-w-0">
       <h3 class="truncate text-base font-semibold text-white group-hover:text-brand-100">

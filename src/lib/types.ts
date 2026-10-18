@@ -110,6 +110,8 @@ export interface AppSummary {
 
 /** Shape serialized into the page for the client-side database UI. */
 export interface ClientGame {
+  artwork: string | null;
+  artwork_kind: 'official-artwork' | 'title-card' | null;
   slug: string;
   name: string;
   name_zh: string | null;

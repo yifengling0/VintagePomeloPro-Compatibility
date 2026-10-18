@@ -1,4 +1,6 @@
 ---
+import GameArtwork from '../../components/GameArtwork.astro';
+import { artworkFor } from '../../lib/artwork';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CompatibilityBadge from '../../components/CompatibilityBadge.astro';
 import { getGames } from '../../lib/games';
@@ -21,6 +23,7 @@ interface Props {
 
 const { game } = Astro.props;
 const s = summarize(game);
+const artwork = artworkFor(game.slug);
 const reports = sortReports(game.reports);
 
 const counts: Record<Status, number> = {
@@ -77,6 +80,14 @@ const formatSourceType = (type: string) => {
         <span class="text-xs text-slate-500">{game.updated_at} 更新</span>
       </div>
     </header>
+
+    <figure class="mt-6 max-w-2xl">
+      <GameArtwork game={game} eager />
+      <figcaption class="mt-2 text-xs text-slate-400">
+        {!artwork || artwork.kind === 'title-card' ? '中性游戏标题卡，非游戏截图。' : '官方宣传图，仅用于识别游戏。'}
+        {artwork && <span> {artwork.attribution} · {artwork.source.startsWith('https://') ? <a href={artwork.source} target="_blank" rel="noopener noreferrer" class="underline">图片来源</a> : '本站制作'} · 图片不代表兼容性测试证据。</span>}
+      </figcaption>
+    </figure>
 
     <!-- Overview -->
     <section class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">

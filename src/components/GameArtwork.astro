@@ -1,0 +1,15 @@
+---
+import type { Game } from '../lib/types';
+import { artworkFor, artworkUrl } from '../lib/artwork';
+interface Props { game: Game; eager?: boolean; }
+const { game, eager = false } = Astro.props;
+const artwork = artworkFor(game.slug);
+const src = artworkUrl(game.slug);
+---
+<div class="game-artwork relative aspect-[460/215] overflow-hidden rounded-lg bg-slate-900">
+  <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-700 to-slate-900 p-4 text-center">
+    <span class="text-base font-semibold text-slate-200">{game.name_zh || game.name}</span>
+    <span class="text-xs text-slate-400">游戏标题卡 · 非游戏画面</span>
+  </div>
+  {src && <img src={src} alt={`${game.name_zh || game.name}${artwork?.kind === 'title-card' ? ' · 中性标题卡（非游戏画面）' : ' · 官方宣传图'}`} width="460" height="215" loading={eager ? 'eager' : 'lazy'} decoding="async" class="relative h-full w-full object-contain" onerror="this.remove()" />}
+</div>

@@ -225,3 +225,7 @@ Agent 行为必须遵守：
 ## License
 
 数据与内容以仓库许可证为准（待补充）。
+
+## 游戏配图维护
+
+每款游戏的安全本地配图与来源记录见 `data/game-images.json`，审核及版权边界见 [配图说明](docs/ARTWORK.md)。新增游戏未登记已审核图片时会自动显示明确标注的中性标题卡；后续可补充已逐图审核的图片；不要自动外链未经审核的商店图片。运行 `npm test`、`npm run validate`、`npm run check`、`npm run build`。

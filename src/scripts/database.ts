@@ -267,6 +267,12 @@ export function initDatabase(): void {
 
     return `
       <article class="group relative flex flex-col rounded-2xl border border-slate-700/60 bg-slate-800/50 p-5 transition hover:border-brand-500/40 hover:bg-slate-800">
+        <a href="${href}" class="mb-4 block" aria-label="${escapeHtml(g.name)} 详情">
+          <div class="game-artwork relative aspect-[460/215] overflow-hidden rounded-lg bg-slate-900">
+            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-700 to-slate-900 p-4 text-center"><span class="text-base font-semibold text-slate-200">${escapeHtml(g.name_zh || g.name)}</span><span class="text-xs text-slate-400">游戏标题卡 · 非游戏画面</span></div>
+            ${g.artwork ? `<img src="${escapeHtml(g.artwork)}" alt="${escapeHtml(g.name_zh || g.name)} · ${g.artwork_kind === 'title-card' ? '中性标题卡（非游戏画面）' : '官方宣传图'}" width="460" height="215" loading="lazy" decoding="async" class="relative h-full w-full object-contain" onerror="this.remove()">` : ''}
+          </div>
+        </a>
         <div class="mb-3 flex items-start justify-between gap-3">
           <div class="min-w-0">
             <h3 class="truncate text-base font-semibold text-white group-hover:text-brand-100">

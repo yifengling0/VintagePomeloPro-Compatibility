@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { parse } from 'yaml';
 import type { ClientGame, Game } from './types';
 import { summarize, summarizeFor } from './filters';
+import { artworkFor, artworkUrl } from './artwork';
 import { APPS } from './apps';
 
 const DATA_DIR = join(process.cwd(), 'data', 'games');
@@ -43,6 +44,8 @@ export function toClientGames(games: Game[]): ClientGame[] {
     }
     return {
       slug: g.slug,
+      artwork: artworkUrl(g.slug),
+      artwork_kind: artworkFor(g.slug)?.kind ?? null,
       name: g.name,
       name_zh: g.name_zh ?? null,
       release_year: g.release_year,
