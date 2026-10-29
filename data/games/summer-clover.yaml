@@ -1,0 +1,68 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+id: summer-clover
+slug: summer-clover
+name: Summer Clover
+name_zh: 夏色四叶草
+aliases: []
+release_date: 2024-06-26
+release_year: 2024
+developer:
+  - Connection
+publisher:
+  - Mango Party
+  - Mango Party News
+genres:
+  - adventure
+  - rpg
+  - simulation
+platforms:
+  - Windows
+external_ids:
+  steam: "2458860"
+  igdb: null
+  gog: null
+metadata_sources:
+  - type: steam
+    id: "2458860"
+    url: https://store.steampowered.com/app/2458860/
+metadata_confidence: high
+created_at: 2026-10-25
+updated_at: 2026-10-25
+reports:
+  - report_id: issue-15
+    source:
+      type: github_issue
+      issue: 15
+      user: TropoSphere12138
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/15
+    tested_at: 2026-10-25
+    app: vintagepomelopro
+    winehua_version: "1.49"
+    device:
+      model: pura x view
+      soc: null
+      gpu: null
+      os: HarmonyOS
+      os_version: 7.0.0.111
+    renderer:
+      backend: other
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: null
+      wine: null
+    status: playable
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: 会闪退
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
