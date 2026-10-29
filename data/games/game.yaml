@@ -1,0 +1,68 @@
+# Game metadata + compatibility reports.
+schema_version: 1
+id: game
+slug: game
+name: 东北之夏
+name_zh: 东北之夏/DongBeiZhiXia
+aliases: []
+release_date: 2023-01-09
+release_year: 2023
+developer:
+  - 庄不纯工作室
+publisher:
+  - 庄不纯工作室
+genres:
+  - free_to_play
+  - rpg
+platforms:
+  - Windows
+external_ids:
+  steam: "2121360"
+  igdb: null
+  gog: null
+metadata_sources:
+  - type: steam
+    id: "2121360"
+    url: https://store.steampowered.com/app/2121360/
+metadata_confidence: high
+created_at: 2026-10-28
+updated_at: 2026-10-28
+reports:
+  - report_id: issue-16
+    source:
+      type: github_issue
+      issue: 16
+      user: wanxihang
+      url: https://github.com/yifengling0/VintagePomeloPro-Compatibility/issues/16
+    tested_at: 2026-10-28
+    app: vintagepomelopro
+    winehua_version: 1.5.1
+    device:
+      model: matepad mini(MLR-AL10）
+      soc: null
+      gpu: HUAWEI Kirin 9010
+      os: HarmonyOS
+      os_version: 7.0.0.111
+    renderer:
+      backend: other
+      version: null
+    graphics_api:
+      api: null
+    architecture:
+      game: null
+      wine: null
+    status: minor_issues
+    performance:
+      fps_avg: null
+      fps_min: null
+      fps_max: null
+      resolution: null
+    symptoms: []
+    workarounds: []
+    notes: |-
+      能正常进入游戏，在进入游戏后，到了问主角名字的情节时会黑屏。游戏就会卡住一会，同时伴有断断续续的杂音，然后再继续正常运行。
+      live2d加载存在问题，部分时候会出现仅加载一部分，稍后正常。可以在菜单里关闭动态立绘。
+    evidence:
+      screenshots: []
+      logs: []
+      videos: []
